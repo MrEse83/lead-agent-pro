@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lead Agent Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --surface: #141416;
+    --surface2: #1c1c1f;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #f0f0f0;
+    --text2: #888;
+    --text3: #555;
+    --accent: #00e5a0;
+    --accent-dim: rgba(0,229,160,0.1);
+    --accent-border: rgba(0,229,160,0.25);
+    --amber: #ffb340;
+    --amber-dim: rgba(255,179,64,0.1);
+    --blue: #4d9fff;
+    --blue-dim: rgba(77,159,255,0.1);
+    --red: #ff5b5b;
+    --red-dim: rgba(255,91,91,0.1);
+    --purple: #a78bfa;
+    --purple-dim: rgba(167,139,250,0.1);
+    --font-head: 'Syne', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-mono);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 13px;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-mark {
+    width: 32px;
+    height: 32px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 14px;
+    color: #000;
+    letter-spacing: -0.5px;
+  }
+
+  .logo-text {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text);
+    letter-spacing: -0.3px;
+  }
+
+  .logo-sub {
+    font-size: 10px;
+    color: var(--text3);
+    font-family: var(--font-mono);
+    margin-top: 1px;
+  }
+
+  /* ── Stats bar ── */
+  .stats-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 28px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .stat-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 16px;
+    min-width: 110px;
+  }
+
+  .stat-pill .num {
+    font-family: var(--font-head);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .stat-pill .num.green { color: var(--accent); }
+  .stat-pill .num.amber { color: var(--amber); }
+  .stat-pill .num.blue { color: var(--blue); }
+
+  .stat-pill .lbl {
+    font-size: 10px;
+    color: var(--text3);
+    line-height: 1.3;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .stat-divider { flex: 1; }
+
+  .industry-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--accent-dim);
+    border: 1px solid var(--accent-border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 11px;
+    color: var(--accent);
+    font-family: var(--font-mono);
+  }
+
+  .industry-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* ── Flash ── */
+  .flash {
+    background: var(--accent-dim);
+    border-left: 3px solid var(--accent);
+    color: var(--accent);
+    padding: 10px 28px;
+    font-size: 12px;
+  }
+
+  .flash.error {
+    background: var(--red-dim);
+    border-color: var(--red);
+    color: var(--red);
+  }
+
+  /* ── Toolbar ── */
+  .toolbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 28px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .filters {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 4px 10px;
+  }
+
+  .filter-group label {
+    font-size: 10px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+
+  .filter-group select {
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-size: 12px;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    outline: none;
+    padding: 2px 0;
+  }
+
+  .filter-group select option { background: var(--surface2); }
+
+  .reset-btn {
+    font-size: 11px;
+    color: var(--text3);
+    text-decoration: none;
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--surface2);
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .reset-btn:hover { color: var(--text); border-color: var(--border2); }
+
+  .batch-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .batch-form input[type=number] {
+    width: 52px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 5px 8px;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--text);
+    outline: none;
+    text-align: center;
+  }
+
+  .btn-batch {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 7px;
+    padding: 6px 14px;
+    font-size: 11px;
+    font-weight: 500;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: opacity 0.15s;
+  }
+
+  .btn-batch:hover { opacity: 0.85; }
+
+  .batch-label { font-size: 11px; color: var(--text3); }
+
+  /* ── Table ── */
+  .table-wrap { padding: 20px 28px; overflow-x: auto; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  th {
+    background: var(--surface2);
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    font-family: var(--font-mono);
+  }
+
+  td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface2); }
+
+  /* ── Score badges ── */
+  .score {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: var(--font-head);
+  }
+
+  .score.hot { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,91,91,0.2); }
+  .score.warm { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(255,179,64,0.2); }
+  .score.cold { background: var(--surface2); color: var(--text3); border: 1px solid var(--border); }
+
+  /* ── Status badges ── */
+  .status-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-family: var(--font-mono);
+  }
+
+  .status-badge.qualified { background: var(--blue-dim); color: var(--blue); }
+  .status-badge.warm { background: var(--amber-dim); color: var(--amber); }
+  .status-badge.new { background: var(--purple-dim); color: var(--purple); }
+  .status-badge.contacted { background: var(--accent-dim); color: var(--accent); }
+  .status-badge.low { background: var(--surface2); color: var(--text3); }
+  .status-badge.replied { background: rgba(0,210,255,0.1); color: #00d2ff; }
+  .status-badge.closed { background: var(--accent-dim); color: var(--accent); }
+
+  /* ── Signal badges ── */
+  .badge {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 500;
+    margin: 1px;
+    font-family: var(--font-mono);
+  }
+
+  .badge.yes { background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent-border); }
+  .badge.no { background: var(--surface2); color: var(--text3); border: 1px solid var(--border); }
+
+  /* ── Lead name ── */
+  .lead-name a {
+    color: var(--text);
+    font-weight: 500;
+    text-decoration: none;
+    font-family: var(--font-head);
+    font-size: 13px;
+    transition: color 0.15s;
+  }
+
+  .lead-name a:hover { color: var(--accent); }
+
+  .sub {
+    color: var(--text3);
+    font-size: 11px;
+    margin-top: 3px;
+    font-family: var(--font-mono);
+  }
+
+  .ig-handle {
+    color: var(--purple);
+    font-size: 11px;
+    margin-top: 2px;
+  }
+
+  /* ── Summary ── */
+  .summary {
+    font-size: 11px;
+    color: var(--text2);
+    line-height: 1.6;
+    max-width: 180px;
+  }
+
+  /* ── Email preview ── */
+  .msg-preview {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 8px 10px;
+    font-size: 11px;
+    color: var(--text2);
+    line-height: 1.5;
+    max-width: 180px;
+    max-height: 56px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    transition: border-color 0.15s;
+    font-family: var(--font-mono);
+  }
+
+  .msg-preview:hover { border-color: var(--border2); }
+
+  .msg-preview::after {
+    content: 'click to open';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, var(--surface2));
+    padding: 10px 10px 4px;
+    font-size: 9px;
+    color: var(--text3);
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Actions ── */
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 140px;
+  }
+
+  .btn {
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    font-size: 11px;
+    cursor: pointer;
+    background: var(--surface2);
+    color: var(--text2);
+    width: 100%;
+    text-align: center;
+    font-family: var(--font-mono);
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .btn:hover { border-color: var(--border2); color: var(--text); }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+
+  .btn.send {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+    font-weight: 500;
+  }
+
+  .btn.send:hover { opacity: 0.85; }
+
+  .btn.sent {
+    background: var(--accent-dim);
+    color: var(--accent);
+    border-color: var(--accent-border);
+    cursor: default;
+  }
+
+  .btn.wa {
+    background: rgba(37,211,102,0.1);
+    color: #25d366;
+    border-color: rgba(37,211,102,0.25);
+  }
+
+  .btn.read {
+    background: var(--blue-dim);
+    color: var(--blue);
+    border-color: rgba(77,159,255,0.25);
+  }
+
+  select.inline {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+    width: 100%;
+    background: var(--surface2);
+    color: var(--text);
+    font-family: var(--font-mono);
+    margin-bottom: 4px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  select.inline option { background: var(--surface2); }
+
+  /* ── Empty state ── */
+  .empty {
+    text-align: center;
+    padding: 80px 40px;
+    color: var(--text3);
+  }
+
+  .empty strong { color: var(--text2); font-family: var(--font-head); font-size: 16px; display: block; margin-bottom: 8px; }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.active { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 14px;
+    padding: 24px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 82vh;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .modal-header h3 {
+    font-family: var(--font-head);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .modal-close {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    font-size: 16px;
+    cursor: pointer;
+    color: var(--text3);
+    padding: 4px 9px;
+    border-radius: 6px;
+    line-height: 1;
+    transition: color 0.15s;
+  }
+
+  .modal-close:hover { color: var(--text); }
+
+  .modal-sub { font-size: 11px; color: var(--text3); margin-top: 3px; font-family: var(--font-mono); }
+
+  .modal-email {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text);
+    overflow-y: auto;
+    flex: 1;
+    min-height: 220px;
+    max-height: 400px;
+    resize: vertical;
+    font-family: var(--font-mono);
+    width: 100%;
+    outline: none;
+  }
+
+  .modal-email:focus { border-color: var(--border2); }
+
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
+  .modal-btn {
+    padding: 8px 16px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    font-size: 12px;
+    cursor: pointer;
+    background: var(--surface2);
+    color: var(--text2);
+    font-family: var(--font-mono);
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .modal-btn:hover { color: var(--text); border-color: var(--border2); }
+
+  .modal-btn.primary {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+    font-weight: 500;
+  }
+
+  .modal-btn.primary:hover { opacity: 0.85; }
+
+  /* ── Contact info ── */
+  .contact-info { font-size: 11px; color: var(--text2); }
+  .contact-info div { margin-bottom: 2px; }
+  .contact-info .email-val { color: var(--blue); }
+  .contact-info .wa-val { color: #25d366; }
+</style>
+</head>
+<body>
+
+<!-- Hidden lead data store -->
+<div id="leadData" style="display:none;">
+{% for lead in leads %}
+{% if lead.outreach_email %}
+<div
+  id="lead-{{ lead.id }}"
+  data-id="{{ lead.id }}"
+  data-name="{{ lead.name }}"
+  data-email="{{ lead.email or '' }}"
+>{{ lead.outreach_email }}</div>
+{% endif %}
+{% endfor %}
+</div>
+
+<!-- Email modal -->
+<div class="modal-overlay" id="emailModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h3 id="modalTitle">Email Preview</h3>
+        <div class="modal-sub" id="modalSub"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <textarea class="modal-email" id="modalEmail"></textarea>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeModal()">Close</button>
+      <button class="modal-btn" onclick="copyEmail()">Copy</button>
+      <button class="modal-btn primary" id="modalSendBtn" onclick="sendFromModal()">Send email</button>
+    </div>
+  </div>
+</div>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo">
+    <div class="logo-mark">LA</div>
+    <div>
+      <div class="logo-text">Lead Agent Pro</div>
+      <div class="logo-sub">Multi-industry outreach platform</div>
+    </div>
+  </div>
+</div>
+
+<!-- Stats bar -->
+<div class="stats-bar">
+  <div class="stat-pill">
+    <div>
+      <div class="num">{{ total }}</div>
+      <div class="lbl">Total</div>
+    </div>
+  </div>
+  <div class="stat-pill">
+    <div>
+      <div class="num amber">{{ hot }}</div>
+      <div class="lbl">Hot leads</div>
+    </div>
+  </div>
+  <div class="stat-pill">
+    <div>
+      <div class="num green">{{ ready }}</div>
+      <div class="lbl">Ready</div>
+    </div>
+  </div>
+  <div class="stat-pill">
+    <div>
+      <div class="num blue">{{ contacted }}</div>
+      <div class="lbl">Contacted</div>
+    </div>
+  </div>
+  <div class="stat-divider"></div>
+  {% if current_industry != 'all' %}
+  <div class="industry-badge">
+    <div class="industry-dot"></div>
+    {{ current_industry | replace('_', ' ') | title }}
+  </div>
+  {% endif %}
+</div>
+
+{% if flash %}
+<div class="flash {% if 'Failed' in flash or 'failed' in flash or 'Error' in flash %}error{% endif %}">
+  {{ flash }}
+</div>
+{% endif %}
+
+<!-- Toolbar -->
+<div class="toolbar">
+  <form method="get" class="filters">
+    <div class="filter-group">
+      <label>Industry</label>
+      <select name="industry" onchange="this.form.submit()">
+        <option value="all" {% if current_industry=='all' %}selected{% endif %}>All</option>
+        {% for ind in industries %}
+        <option value="{{ ind }}" {% if current_industry==ind %}selected{% endif %}>
+          {{ ind | replace('_', ' ') | title }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Status</label>
+      <select name="status" onchange="this.form.submit()">
+        <option value="all" {% if current_status=='all' %}selected{% endif %}>All</option>
+        <option value="qualified" {% if current_status=='qualified' %}selected{% endif %}>Qualified</option>
+        <option value="warm" {% if current_status=='warm' %}selected{% endif %}>Warm</option>
+        <option value="new" {% if current_status=='new' %}selected{% endif %}>New</option>
+        <option value="contacted" {% if current_status=='contacted' %}selected{% endif %}>Contacted</option>
+        <option value="replied" {% if current_status=='replied' %}selected{% endif %}>Replied</option>
+        <option value="low" {% if current_status=='low' %}selected{% endif %}>Low</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Priority</label>
+      <select name="priority" onchange="this.form.submit()">
+        <option value="all" {% if current_priority=='all' %}selected{% endif %}>All</option>
+        <option value="hot" {% if current_priority=='hot' %}selected{% endif %}>Hot</option>
+        <option value="warm" {% if current_priority=='warm' %}selected{% endif %}>Warm</option>
+        <option value="cold" {% if current_priority=='cold' %}selected{% endif %}>Cold</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>City</label>
+      <select name="city" onchange="this.form.submit()">
+        <option value="all">All cities</option>
+        {% for c in cities %}
+        <option value="{{ c }}" {% if current_city==c %}selected{% endif %}>{{ c }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <a class="reset-btn" href="/">Reset</a>
+  </form>
+  <form method="post" action="/send-batch" class="batch-form">
+    <span class="batch-label">Batch send:</span>
+    <input type="number" name="limit" value="20" min="1" max="30">
+    <button type="submit" class="btn-batch">Send emails</button>
+  </form>
+</div>
+
+<!-- Table -->
+<div class="table-wrap">
+{% if leads %}
+<table>
+  <thead>
+    <tr>
+      <th>Business</th>
+      <th>Score</th>
+      <th>Status</th>
+      <th>Contact</th>
+      <th>Signals</th>
+      <th>AI Summary</th>
+      <th>Email preview</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for lead in leads %}
+  <tr>
+    <td>
+      <div class="lead-name">
+        {% if lead.website %}
+        <a href="{{ lead.website }}" target="_blank">{{ lead.name }}</a>
+        {% else %}
+        {{ lead.name }}
+        {% endif %}
+      </div>
+      <div class="sub">{{ lead.city }} · {{ lead.category }}</div>
+      {% if lead.instagram_handle %}
+      <div class="ig-handle">{{ lead.instagram_handle }}</div>
+      {% endif %}
+    </td>
+    <td>
+      {% if lead.automation_score %}
+      <span class="score {{ lead.priority or 'cold' }}">{{ lead.automation_score }}</span>
+      {% else %}
+      <span style="color:var(--text3)">—</span>
+      {% endif %}
+    </td>
+    <td>
+      <span class="status-badge {{ lead.lead_status }}">{{ lead.lead_status }}</span>
+      {% if lead.contacted_at %}
+      <div class="sub" style="margin-top:4px;">via {{ lead.contact_channel or '?' }}</div>
+      {% endif %}
+    </td>
+    <td>
+      <div class="contact-info">
+        {% if lead.email %}<div class="email-val">✉ {{ lead.email }}</div>{% endif %}
+        {% if lead.phone %}<div>☎ {{ lead.phone }}</div>{% endif %}
+        {% if lead.whatsapp_number %}<div class="wa-val">WA {{ lead.whatsapp_number }}</div>{% endif %}
+      </div>
+    </td>
+    <td>
+      <span class="badge {{ 'yes' if lead.has_whatsapp else 'no' }}">WA</span>
+      <span class="badge {{ 'no' if lead.has_chatbot else 'yes' }}">No bot</span>
+      {% if lead.instagram_handle %}
+      <span class="badge yes">IG</span>
+      {% endif %}
+      {% if lead.runs_ads %}
+      <span class="badge yes">Ads</span>
+      {% endif %}
+    </td>
+    <td>
+      {% if lead.ai_summary %}
+      <div class="summary">{{ lead.ai_summary }}</div>
+      {% else %}
+      <span style="color:var(--text3);font-size:11px;">Not analyzed</span>
+      {% endif %}
+    </td>
+    <td>
+      {% if lead.outreach_email %}
+      <div class="msg-preview" onclick="openModal('{{ lead.id }}')"></div>
+        {{ lead.outreach_email[:110] }}...
+      </div>
+      {% else %}
+      <span style="color:var(--text3);font-size:11px;">Not generated</span>
+      {% endif %}
+    </td>
+    <td>
+      <div class="actions">
+        {% if lead.email and lead.outreach_email %}
+          {% if lead.lead_status == 'contacted' and lead.contact_channel == 'email' %}
+          <button class="btn sent" disabled>✓ Email sent</button>
+          {% else %}
+          <button class="btn read" onclick="openModal('{{ lead.id }}')">Read & send</button>
+          {% endif %}
+        {% else %}
+          <button class="btn" disabled>No email/msg</button>
+        {% endif %}
+        {% if lead.outreach_whatsapp and lead.whatsapp_number %}
+        <button class="btn wa"
+          onclick="navigator.clipboard.writeText(this.dataset.msg);this.textContent='✓ Copied!';"
+          data-msg="{{ lead.outreach_whatsapp }}">Copy WA msg</button>
+        {% endif %}
+        <form method="post" action="/update-status/{{ lead.id }}">
+          <select name="status" class="inline">
+            <option value="qualified">Qualified</option>
+            <option value="warm">Warm</option>
+            <option value="contacted">Contacted</option>
+            <option value="replied">Replied</option>
+            <option value="closed">Closed</option>
+            <option value="low">Low</option>
+          </select>
+          <button class="btn" type="submit">Update status</button>
+        </form>
+      </div>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="empty">
+  <strong>No leads found</strong>
+  <p>Run scraper.py --industry medspas_us to get started.</p>
+</div>
+{% endif %}
+</div>
+
+<script>
+let currentLeadId = null;
+
+function openModal(leadId) {
+  const el = document.getElementById('lead-' + leadId);
+  if (!el) { alert('No email generated for this lead.'); return; }
+
+  currentLeadId = leadId;
+  const name = el.dataset.name;
+  const email = el.dataset.email;
+  const emailText = el.textContent.trim();
+
+  document.getElementById('modalTitle').textContent = 'Email — ' + name;
+  document.getElementById('modalSub').textContent = email ? '✉ ' + email : 'No email address — copy and send manually';
+  document.getElementById('modalEmail').value = emailText;
+
+  const sendBtn = document.getElementById('modalSendBtn');
+  sendBtn.disabled = !email;
+  sendBtn.style.opacity = email ? '1' : '0.4';
+
+  document.getElementById('emailModal').classList.add('active');
+  document.getElementById('modalEmail').focus();
+}
+
+function closeModal() {
+  document.getElementById('emailModal').classList.remove('active');
+  currentLeadId = null;
+}
+
+function copyEmail() {
+  const text = document.getElementById('modalEmail').value;
+  if (text) {
+    navigator.clipboard.writeText(text);
+    const btn = event.target;
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  }
+}
+
+function sendFromModal() {
+  if (!currentLeadId) return;
+  const editedEmail = document.getElementById('modalEmail').value;
+  closeModal();
+  const form = document.createElement('form');
+  form.method = 'post';
+  form.action = '/send-email/' + currentLeadId;
+  const input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = 'custom_message';
+  input.value = editedEmail;
+  form.appendChild(input);
+  document.body.appendChild(form);
+  form.submit();
+}
+
+document.getElementById('emailModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+</script>
+</body>
+</html>
